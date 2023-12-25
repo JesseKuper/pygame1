@@ -5,8 +5,8 @@ import random
 running = True
 while running:
     pygame.init()
-    screenWidth = 1280
-    screenHeight = 720
+    screenWidth = 1980#1280
+    screenHeight = 1080#720
     screen = pygame.display.set_mode((screenWidth, screenHeight))
     clock = pygame.time.Clock()
     running = True
@@ -22,11 +22,17 @@ while running:
     movepos = screenWidth / 3
     score = 0
     speed = 3
+    acc = 1.1
     lifes = 3
-    health = False
+    sps = random.randint(1, 3)
+    psps = random.randint(1, 3)
+    gameover = False
 
-    def pause(screen, selected):
-        screen.fill("yellow")
+    def pause(screen, selected, gameover, score):
+        if gameover:
+            screen.fill("red")
+        else:
+            screen.fill("grey")
         option = ""
         tel = 0
         o1 = o2 = "black"
@@ -36,13 +42,19 @@ while running:
                 list[tel] = "white"
             tel +=1
 
-        font = pygame.font.SysFont(None, 24)
-        img = font.render("Resume", True, list[0])
-        screen.blit(img, (20, 20))
+        if gameover:
+            list[1] = "White"
+            font = pygame.font.SysFont(None, 200)
+            img = font.render(f"Score: {score}", True, list[0])
+            screen.blit(img, ((screenWidth/4), (screenHeight/4)))
+        else:
+            font = pygame.font.SysFont(None, 200)
+            img = font.render("Resume", True, list[0])
+            screen.blit(img, ((screenWidth/4), (screenHeight/4)))
 
-        font = pygame.font.SysFont(None, 24)
+        font = pygame.font.SysFont(None, 100)
         img = font.render("Quit", True, list[1])
-        screen.blit(img, (20, 40))
+        screen.blit(img, ((screenWidth/4), (screenHeight/2)))
         return option
 
 
@@ -50,50 +62,66 @@ while running:
         menu = True
         play = False
         tel = 0
-        e1 = e2 = e3 = e4 = "black"
-        list = [e1, e2, e3, e4]
-        for i in list:
+        e1 = "black"
+        e2 = e3 = e4 = "red"
+        e1n = e2n = e3n = e4n = 100
+        color = [e1, e2, e3, e4]
+        size = [e1n, e2n, e3n, e4n]
+        for i in color:
             if selected == tel:
-                list[tel] = "white"
+                size[tel] = 125
+                color[tel] = "white"
             tel +=1
-        font = pygame.font.SysFont(None, 24)
-        img = font.render('CLICK SPATIE OM TE KIEZEN', True, "red")
-        screen.blit(img, (20, 0))
 
-        font = pygame.font.SysFont(None, 24)
-        img = font.render('ENTER', True, list[0])
+
+        font = pygame.font.SysFont(None, size[0])
+        img = font.render('PLAY', True, color[0])
         screen.blit(img, (20, 20))
 
-        font = pygame.font.SysFont(None, 24)
-        img = font.render('ENTER2', True, list[1])
-        screen.blit(img, (20, 40))
+        font = pygame.font.SysFont(None, size[1])
+        img = font.render('SCORES(Werkt nog niet)', True, color[1])
+        screen.blit(img, (20, 120))
 
-        font = pygame.font.SysFont(None, 24)
-        img = font.render('ENTER3', True, list[2])
-        screen.blit(img, (20, 60))
+        font = pygame.font.SysFont(None, size[2])
+        img = font.render('ENTER3', True, color[2])
+        screen.blit(img, (20, 220))
 
-        font = pygame.font.SysFont(None, 24)
-        img = font.render('ENTER4', True, list[3])
-        screen.blit(img, (20, 80))
+        font = pygame.font.SysFont(None, size[3])
+        img = font.render('ENTER4', True, color[3])
+        screen.blit(img, (20, 320))
         return menu, play
 
-    def Game(screen, xpos, ypos, expos, eypos, score, lifes, health):
+
+
+
+    def Game(screen, xpos, ypos, expos, eypos, score, lifes, sps, psps):
         play = True
         menu = False
-        lane1 = pygame.draw.rect(screen, "white", pygame.Rect((screenWidth/2) -10, 0, 80, screenHeight))
-        lane2 = pygame.draw.rect(screen, "white", pygame.Rect((screenWidth/2) + movepos - 10, 0, 80, screenHeight))
-        lane3 = pygame.draw.rect(screen, "white", pygame.Rect((screenWidth/2) - movepos - 10, 0, 80, screenHeight))
-        fireball = pygame.image.load("fireball.png")
-        water = pygame.image.load("water.png")
+        lane1 = pygame.draw.rect(screen, "white", pygame.Rect((screenWidth/2) - ((screenWidth/10) -60) /2, 0, screenWidth/10, screenHeight))
+        lane2 = pygame.draw.rect(screen, "white", pygame.Rect((screenWidth/2) + movepos - ((screenWidth/10) -60) /2, 0, screenWidth/10, screenHeight))
+        lane3 = pygame.draw.rect(screen, "white", pygame.Rect((screenWidth/2) - movepos - ((screenWidth/10) -60) /2, 0, screenWidth/10, screenHeight))
+
+        rock = pygame.image.load("rock.png")
+        paper = pygame.image.load("paper.png")
+        scissors = pygame.image.load("scissors.png")
+
         
         player = pygame.draw.rect(screen, "white", pygame.Rect(xpos, ypos, 60, 60))
         enemy = pygame.draw.rect(screen, "white", pygame.Rect(expos, eypos, 60, 60))
 
-        if health == 1:
-            screen.blit(fireball, enemy)
-        else:
-            screen.blit(water, enemy)
-        screen.blit(fireball, player)
+        if sps == 1:
+            screen.blit(rock, enemy)
+        elif sps == 2:
+            screen.blit(paper, enemy)
+        elif sps == 3:
+            screen.blit(scissors, enemy)
+
+        if psps == 1:
+            screen.blit(rock, player)
+        elif psps == 2:
+            screen.blit(paper, player)
+        elif psps == 3:
+            screen.blit(scissors, player)
         
 
         font = pygame.font.SysFont(None, 60)
@@ -120,7 +148,7 @@ while running:
                 if pressedkey.key == pygame.K_DOWN:
                     if selected >= 0 and selected < 3:
                         selected += 1
-                if pressedkey.key == pygame.K_SPACE:
+                if pressedkey.key == pygame.K_RETURN:
                     if selected == 0:
                         menu = False
                         play = True 
@@ -133,25 +161,29 @@ while running:
 
     
     while play:
+        check = ["12", "23", "31"]
         screen.fill("grey")
         spawns = [screenWidth/2, (screenWidth/2) + movepos, (screenWidth/2) - movepos  ]
         if paused == False:
-            menu, play, player, enemy = Game(screen, xpos, ypos, expos, eypos, score, lifes, health)
+            menu, play, player, enemy = Game(screen, xpos, ypos, expos, eypos, score, lifes, sps, psps)
             eypos += speed
             if lifes == 0:
-                play = False
-                menu = True
-            if health == 1:
-                if player.colliderect(enemy):
-                    lifes += 1
-                    eypos = screenHeight + 10
-            else:
-                if player.colliderect(enemy):
+                gameover = True
+                paused = True
+            if player.colliderect(enemy):
+                win = False
+                for i in check:
+                    if str(sps) + str(psps) == i:
+                        lifes += 1
+                        eypos = screenHeight + 10
+                        win = True
+                if win == False:
                     lifes -= 1
                     eypos = screenHeight + 10
             if eypos > screenHeight:
-                health = random.randint(1, 20)
-                speed = speed * 1.2
+                sps = random.randint(1, 3)
+                psps = random.randint(1, 3)
+                speed = speed * acc
                 if speed > 10:
                     speed = 10
                 score += 1
@@ -176,7 +208,7 @@ while running:
                             xpos += -movepos
                             ypos += 0
         if paused:
-            option = pause(screen, pselected)
+            option = pause(screen, pselected, gameover, score)
             for pressedkey in pygame.event.get():
                 if pressedkey.type == pygame.KEYDOWN:
                     #if pressedkey.key == pygame.K_ESCAPE:
@@ -188,10 +220,12 @@ while running:
                     if pressedkey.key == pygame.K_DOWN:
                         if pselected >= 0 and pselected < 1:
                             pselected += 1
-                    if pressedkey.key == pygame.K_SPACE:
+                    if pressedkey.key == pygame.K_RETURN:
+                        if gameover:
+                            pselected = 1
                         if pselected == 0:
                             paused = False
-                            menu, play, player, enemy  = Game(screen, xpos, ypos, expos, eypos, score, lifes, health)
+                            menu, play, player, enemy  = Game(screen, xpos, ypos, expos, eypos, score, lifes, sps, psps)
                         if pselected == 1:
                             paused = False
                             play = False
